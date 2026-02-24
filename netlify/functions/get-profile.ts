@@ -6,7 +6,7 @@ export const handler: Handler = async (event, context) => {
     const { uid } = event.queryStringParameters;
     if (!uid) return { statusCode: 400, body: 'Missing uid' };
 
-    const userDoc = await db.collection('users').doc(uid).get();
+    const userDoc = await db.collection('profiles').doc(uid).get();
 
     if (!userDoc.exists) {
       return { statusCode: 404, body: 'Profile not found' };

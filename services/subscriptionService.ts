@@ -1,53 +1,47 @@
 import { auth } from './firebase';
-import { loadStripe, Stripe } from '@stripe/stripe-js';
-
-const getStripe = () => {
-    return loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
-};
 
 export const subscriptionService = {
-    async createCheckoutSession() {
-        const user = auth.currentUser;
-        if (!user) throw new Error('User not logged in');
+  async createCheckoutSession() {
+    const user = auth.currentUser;
+    if (!user) throw new Error('User not logged in');
 
-        const idToken = await user.getIdToken();
+    const idToken = await user.getIdToken();
 
-        const response = await fetch('/api/create-checkout-session', {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${idToken}`,
-            },
-        });
+    const response = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    });
 
-        if (!response.ok) {
-            throw new Error('Failed to create checkout session');
-        }
+    if (!response.ok) {
+      throw new Error('Failed to create checkout session');
+    }
 
-        const { sessionId } = await response.json();
-        const stripe = await getStripe();
-        if (stripe) {
-          await stripe.redirectToCheckout({ sessionId });
-        }
-    },
+    const data = await response.json();
 
-    async verifySubscription(): Promise<{ proActive: boolean }> {
-        const user = auth.currentUser;
-        if (!user) return { proActive: false };
+    // Redirect directly to Stripe-hosted checkout
+    window.location.href = data.url;
+  },
 
-        const idToken = await user.getIdToken();
+  async verifySubscription(): Promise<{ proActive: boolean }> {
+    const user = auth.currentUser;
+    if (!user) return { proActive: false };
 
-        const response = await fetch('/api/verify-subscription', {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${idToken}`,
-            },
-        });
+    const idToken = await user.getIdToken();
 
-        if (!response.ok) {
-            console.error('Failed to verify subscription');
-            return { proActive: false };
-        }
+    const response = await fetch('/api/verify-subscription', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    });
 
-        return response.json();
-    },
+    if (!response.ok) {
+      console.error('Failed to verify subscription');
+      return { proActive: false };
+    }
+
+    return response.json();
+  },
 };

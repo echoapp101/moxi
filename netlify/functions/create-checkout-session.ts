@@ -49,7 +49,7 @@ const session = await stripe.checkout.sessions.create({
 });
     return {
       statusCode: 200,
-      body: JSON.stringify({ sessionId: session.id }),
+body: JSON.stringify({ url: session.url }),
     };
   } catch (error) {
     console.error(error);

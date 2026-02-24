@@ -29,22 +29,24 @@ const handler: Handler = async (event, context) => {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     const uid = decodedToken.uid;
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-price: process.env.STRIPE_PRICE_ID,
-...
-success_url: `${process.env.APP_URL}?pro=true`,
-cancel_url: `${process.env.APP_URL}`,
-      client_reference_id: uid,
-      subscription_data: {
-        metadata: {
-          uid: uid,
-        },
-      },
-    });
-
+const session = await stripe.checkout.sessions.create({
+  payment_method_types: ['card'],
+  line_items: [
+    {
+      price: process.env.STRIPE_PRICE_ID!,
+      quantity: 1,
+    },
+  ],
+  mode: 'subscription',
+  success_url: `${process.env.APP_URL}?pro=true`,
+  cancel_url: `${process.env.APP_URL}`,
+  client_reference_id: uid,
+  subscription_data: {
+    metadata: {
+      uid: uid,
+    },
+  },
+});
     return {
       statusCode: 200,
       body: JSON.stringify({ sessionId: session.id }),

@@ -29,7 +29,7 @@ const callApi = async (endpoint: string, options: RequestInit = {}) => {
     };
   }
 
-  const response = await fetch(`/.netlify/functions/${endpoint}`, options);
+  const response = await fetch(`/api/${endpoint}`, options);
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: 'Request failed' }));
     throw new Error(errorData.error);

@@ -12,7 +12,7 @@ export const subscriptionService = {
 
         const idToken = await user.getIdToken();
 
-        const response = await fetch('/.netlify/functions/create-checkout-session', {
+        const response = await fetch('/api/create-checkout-session', {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${idToken}`,
@@ -36,7 +36,7 @@ export const subscriptionService = {
 
         const idToken = await user.getIdToken();
 
-        const response = await fetch('/.netlify/functions/verify-subscription', {
+        const response = await fetch('/api/verify-subscription', {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${idToken}`,

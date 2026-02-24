@@ -1,0 +1,23 @@
+# Query: /.netlify/functions/
+# ContextLines: 1
+
+4 results - 3 files
+
+netlify.toml:
+  10    from = "/api/*"
+  11:   to = "/.netlify/functions/:splat"
+  12    status = 200
+
+services/galleryService.ts:
+  31  
+  32:   const response = await fetch(`/api/${endpoint}`, options);
+  33    if (!response.ok) {
+
+services/subscriptionService.ts:
+  14  
+  15:         const response = await fetch('/api/create-checkout-session', {
+  16              method: 'POST',
+
+  38  
+  39:         const response = await fetch('/api/verify-subscription', {
+  40              method: 'POST',

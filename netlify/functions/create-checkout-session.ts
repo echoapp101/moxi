@@ -33,13 +33,10 @@ const handler: Handler = async (event, context) => {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: process.env.VITE_STRIPE_PRICE_ID,
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      success_url: `${process.env.VITE_APP_URL}?pro=true`,
-      cancel_url: `${process.env.VITE_APP_URL}`,
+price: process.env.STRIPE_PRICE_ID,
+...
+success_url: `${process.env.APP_URL}?pro=true`,
+cancel_url: `${process.env.APP_URL}`,
       client_reference_id: uid,
       subscription_data: {
         metadata: {

@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Profiles: Anyone can read. Users can write their own profile.
+    match /profiles/{userId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && (
+        request.auth.uid == userId || 
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['followersCount'])
+      );
+    }
+    
+    // Artworks: Anyone can read public ones. Users manage their own.
+    match /artworks/{artworkId} {
+      allow read: if resource.data.isPublic == true || (request.auth != null && request.auth.uid == resource.data.user.uid);
+      allow create: if request.auth != null;
+      allow delete: if request.auth != null && request.auth.uid == resource.data.user.uid;
+      
+      allow update: if request.auth != null && (
+        request.auth.uid == resource.data.user.uid ||
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'comments'])
+      );
+    }
+    
+    // Following: Users manage their own follows. 
+    match /following/{followId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.followerId;
+      allow delete: if request.auth != null && (
+        request.auth.uid == resource.data.followerId ||
+        request.auth.uid == resource.data.targetId
+      );
+    }
+    
+    // Reports: Any authenticated user can submit.
+    match /reports/{reportId} {
+      allow create: if request.auth != null;
+      allow read: if false; 
+    }
+  }
+}

@@ -11,6 +11,7 @@ import { Library } from './components/Library';
 import { Sidebar } from './components/Sidebar';
 import { AuthModal } from './components/AuthModal';
 import { SettingsModal } from './components/SettingsModal';
+import { ProFeaturesModal } from './components/ProFeaturesModal';
 import { galleryService, Artwork } from './services/galleryService';
 import { auth, subscribeToAuthChanges } from './services/firebase';
 import { User } from 'firebase/auth';
@@ -53,7 +54,7 @@ const App: React.FC = () => {
 
   const handleTabClick = (tab: 'paint' | 'brushes' | 'physics' | 'paper' | 'studio') => {
     if (tab === 'physics' && !proActive) {
-      subscriptionService.createCheckoutSession();
+      setShowProFeatures(true);
       return;
     }
     setActiveTab(tab);
@@ -64,6 +65,7 @@ const App: React.FC = () => {
   const currentStrokeStartRef = useRef<number | null>(null);
   const [guestLimitReached, setGuestLimitReached] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showProFeatures, setShowProFeatures] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [proActive, setProActive] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
@@ -334,7 +336,7 @@ export const DEFAULT_SETTINGS: { simulation: SimulationParams, paper: PaperParam
   
     const handleSaveImage = useCallback((highRes: boolean) => {
     if (highRes && !proActive) {
-      subscriptionService.createCheckoutSession();
+      setShowProFeatures(true);
       return;
     }
     if (!canvasRef.current) return;
@@ -344,7 +346,7 @@ export const DEFAULT_SETTINGS: { simulation: SimulationParams, paper: PaperParam
     const tempCtx = tempCanvas.getContext('2d');
     if (!tempCtx) return;
 
-    const resolution = highRes ? 2048 : 1024;
+    const resolution = highRes ? 2048 : 720;
     tempCanvas.width = resolution;
     tempCanvas.height = resolution;
 
@@ -357,7 +359,7 @@ export const DEFAULT_SETTINGS: { simulation: SimulationParams, paper: PaperParam
       tempCtx.fillStyle = 'rgba(0, 0, 0, 0.2)';
       tempCtx.textAlign = 'right';
       tempCtx.textBaseline = 'bottom';
-      tempCtx.fillText('Moxi', resolution - 20, resolution - 20);
+      tempCtx.fillText('moxi.lol', resolution - 20, resolution - 20);
     }
 
     const link = document.createElement('a');
@@ -383,7 +385,7 @@ export const DEFAULT_SETTINGS: { simulation: SimulationParams, paper: PaperParam
 
   const handleBackgroundImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!proActive) {
-      subscriptionService.createCheckoutSession();
+      setShowProFeatures(true);
       return;
     }
     const file = e.target.files?.[0];
@@ -851,6 +853,7 @@ export const DEFAULT_SETTINGS: { simulation: SimulationParams, paper: PaperParam
             onOpenGallery={() => setView('gallery')}
             onOpenSettings={() => setShowSettings(true)}
             onOpenAuth={() => setShowAuth(true)}
+            onOpenProFeatures={() => setShowProFeatures(true)}
             proActive={proActive}
         />
 
@@ -985,6 +988,12 @@ export const DEFAULT_SETTINGS: { simulation: SimulationParams, paper: PaperParam
                     onClose={() => setShowSettings(false)} 
                     settings={settings}
                     onSettingsChange={handleSettingsChange} 
+                />
+            )}
+            {showProFeatures && (
+                <ProFeaturesModal
+                    isOpen={showProFeatures}
+                    onClose={() => setShowProFeatures(false)}
                 />
             )}
         </AnimatePresence>

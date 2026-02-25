@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User as UserIcon, Settings, Globe, LogOut, LogIn, ChevronRight, ChevronLeft, Library } from 'lucide-react';
+import { User as UserIcon, Settings, Globe, LogOut, LogIn, ChevronRight, ChevronLeft, Library, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { subscriptionService } from '../services/subscriptionService';
 import { signInWithGoogle, logout, subscribeToAuthChanges } from '../services/firebase';
@@ -10,10 +10,11 @@ interface SidebarProps {
   onOpenGallery: () => void;
   onOpenSettings: () => void;
   onOpenAuth: () => void;
+  onOpenProFeatures: () => void;
   proActive: boolean;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ onOpenLibrary, onOpenGallery, onOpenSettings, onOpenAuth, proActive }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ onOpenLibrary, onOpenGallery, onOpenSettings, onOpenAuth, onOpenProFeatures, proActive }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
@@ -87,10 +88,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenLibrary, onOpenGallery, 
         />
         {!proActive && user && (
           <SidebarItem 
-            icon={<UserIcon size={20} />} 
-            label="Go Pro" 
+            icon={<Zap size={20} className="text-amber-500" />} 
+            label="Get Pro" 
             isExpanded={isExpanded} 
-            onClick={() => subscriptionService.createCheckoutSession()}
+            onClick={onOpenProFeatures}
           />
         )}
       </nav>

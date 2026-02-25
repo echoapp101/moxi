@@ -437,7 +437,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
           {/* Global Footer Actions */}
           {activeTab !== 'studio' && (
-            <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800 flex flex-col gap-4">
+            <div className="mt-6 pt-6 pb-10 border-t border-zinc-100 dark:border-zinc-800 flex flex-col gap-6">
                 <div className="flex gap-2">
                     <div className="flex gap-1">
                        <button
